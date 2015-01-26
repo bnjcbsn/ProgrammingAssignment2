@@ -14,6 +14,7 @@
 
 makeCacheMatrix <- function(x = matrix()) {
   m <- NULL
+  ## the next four sets are the functions that inhabit this environment
   set <- function(y) {
     x <<- y
     m <<- NULL
@@ -21,6 +22,8 @@ makeCacheMatrix <- function(x = matrix()) {
   get <- function() x
   setinverse <- function(solve) m <<- solve
   getinverse <- function() m
+  ## populates the list that will associate with 
+  ## 'x=matrix' in the specific environment
   list(set = set, get = get,
        setinverse = setinverse,
        getinverse = getinverse)
@@ -31,15 +34,19 @@ makeCacheMatrix <- function(x = matrix()) {
 ## Write a short comment describing this function
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
-  ## check cahced value of x$getinverse
+  ## Return a matrix that is the inverse of 'x'
+  ## check cached value of x$getinverse
   m <- x$getinverse()
   if(!is.null(m)) {
     message("getting cached data")
     return(m)
   }
+  ## calls get function in x env
   data <- x$get()
+  ## calls the defined 'solve' function in x env using prev data
   m <- solve(data, ...)
+  ## calls setinverse which applies solve to the data
+  ## in initial call to makeCacheMatrix(x)
   x$setinverse(m)
   m
 }
